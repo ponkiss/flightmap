@@ -1,4 +1,3 @@
-/* General Styles */
 body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
@@ -10,20 +9,62 @@ body {
     justify-content: space-between;
     min-height: 100vh;
     text-align: center;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+    position: relative;
+    overflow: hidden; /* Para asegurar que no se salga el fondo */
 }
 
-/* Header */
+/* Contenedor de la imagen de fondo */
+.background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../images/bg.jpg'); /* Ruta de la imagen */
+    background-size: 100%; /* Tamaño de la imagen ajustado al 50% */
+    background-repeat: no-repeat; /* Evitar que se repita */
+    background-position: center; /* Centrar la imagen */
+    opacity: 0.2; /* Opacidad del 20% */
+    z-index: -1; /* Colocar la imagen detrás del contenido */
+}
+
+/* Pseudo-elemento para aplicar la opacidad solo al fondo */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: inherit; /* Usar la misma imagen de fondo */
+    background-size: inherit;
+    background-repeat: inherit;
+    background-position: inherit;
+    opacity: 0.2; /* Opacidad del 20% */
+    z-index: -1; /* Colocar la imagen detrás del contenido */
+}
 header {
     background-color: #007BFF;
     padding: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .logo img {
     height: 50px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.logo img:hover {
+    transform: scale(1.05);
 }
 
 nav a {
@@ -31,20 +72,23 @@ nav a {
     margin: 0 15px;
     text-decoration: none;
     font-weight: 600;
+    font-size: 1.1em;
+    transition: color 0.3s ease;
 }
 
-nav a:hover {
+nav a:hover, nav a:focus {
     text-decoration: underline;
+    color: #ffdd57;
 }
 
-/* Main Content */
 main {
     text-align: center;
     padding: 50px 20px;
+    animation: fadeIn 1s ease;
 }
 
 h1 {
-    font-size: 2.5em;
+    font-size: 2.8em;
     color: #007BFF;
     margin-bottom: 20px;
     animation: fadeInDown 1s ease;
@@ -54,16 +98,26 @@ p {
     font-size: 1.2em;
     margin-bottom: 40px;
     color: #555;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* Form Styles */
 form input, form button {
     margin: 10px 0;
     padding: 15px;
-    width: 80%;
+    width: 100%;
     max-width: 400px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+form input:focus {
+    border-color: #007BFF;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 button {
@@ -75,20 +129,28 @@ button {
     font-size: 1em;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
     width: 80%;
     max-width: 400px;
+    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
 }
 
-button:hover {
+button:hover, button:focus {
     background-color: #0056b3;
+    transform: translateY(-2px);
 }
 
-/* CTA Buttons for Index */
+button:active {
+    background-color: #004085;
+    transform: translateY(0);
+}
+
 .cta-buttons {
     display: flex;
     justify-content: center;
     gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 30px;
 }
 
 .cta-buttons .btn {
@@ -99,30 +161,44 @@ button:hover {
     background-color: #007BFF;
     color: white;
     font-weight: 600;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
 }
 
-.cta-buttons .btn:hover {
+.cta-buttons .btn:hover, .cta-buttons .btn:focus {
     background-color: #0056b3;
+    transform: translateY(-2px);
 }
 
 .cta-buttons .btn.secondary {
     background-color: #6c757d;
 }
 
-.cta-buttons .btn.secondary:hover {
+.cta-buttons .btn.secondary:hover, .cta-buttons .btn.secondary:focus {
     background-color: #5a6268;
 }
 
-/* Footer */
 footer {
     text-align: center;
     padding: 20px;
-    background-color: #007BFF;
+    background-color: #ffffff;
     color: white;
+    position: relative;
+    bottom: 0;
+
 }
 
-/* Animations */
+footer a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+footer a:hover, footer a:focus {
+    text-decoration: underline;
+    color: #ffdd57;
+}
+
 @keyframes fadeInDown {
     from {
         opacity: 0;
@@ -131,5 +207,14 @@ footer {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
     }
 }
