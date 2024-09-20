@@ -1,50 +1,87 @@
 <?php
-include 'db.php'; // Conexión a la base de datos
+session_start();
+include 'db.php';
 
 // Función de registro
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_GET['action'] == 'register') {
-    $username = $_POST['username'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Encriptación de la contraseña
-    $email = $_POST['email'];
+    // Recibe los valores del formulario de manera segura
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hasheo seguro
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $role = 'user';
 
-    $sql = "INSERT INTO Users (username, password, email) VALUES ('$username', '$password', '$email')";
-    if (mysqli_query($conn, $sql)) {
-        echo "Usuario registrado con éxito";
+    // Prepara la sentencia SQL para evitar inyección de SQL
+    $stmt = $conn->prepare("INSERT INTO Users (username, password, email, role) VALUES (?, ?, ?, ?)");
+    
+    if ($stmt) {
+        // Vincula los parámetros a la consulta
+        $stmt->bind_param("ssss", $username, $password, $email, $role);
+        
+        // Ejecuta la consulta
+        if ($stmt->execute()) {
+            // Redirige al usuario si el registro fue exitoso
+            header("Location: ../index.html");
+            exit();  // Detiene el script después de la redirección
+        } else {
+            echo "Error al registrar el usuario: " . $stmt->error;
+        }
+        
+        // Cierra la sentencia
+        $stmt->close();
     } else {
-        echo "Error: " . mysqli_error($conn);
+        echo "Error en la preparación de la consulta: " . $conn->error;
     }
 }
 
-// Función de inicio de sesión
+// Función de login
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_GET['action'] == 'login') {
-    $username = $_POST['username'];
+    // Recibe los valores del formulario de manera segura
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
     $password = $_POST['password'];
 
-    $sql = "SELECT * FROM Users WHERE username = '$username'";
-    $result = mysqli_query($conn, $sql);
-    $user = mysqli_fetch_assoc($result);
+    // Prepara la sentencia SQL para evitar inyección de SQL
+    $stmt = $conn->prepare("SELECT * FROM Users WHERE username = ?");
+    
+    if ($stmt) {
+        // Vincula los parámetros a la consulta
+        $stmt->bind_param("s", $username);
+        
+        // Ejecuta la consulta
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        
+        // Verifica la contraseña
+        if ($user && password_verify($password, $user['password'])) {
+            // Guardar la información del usuario en la sesión
+            $_SESSION['user'] = [
+                'id' => $user['id'],
+                'username' => $user['username'],
+                'role' => $user['role']
+            ];
+            
+            // Redirige según el rol del usuario
+            if ($user['role'] == 'admin') {
+                header('Location: ../users/admin_dashboard.php');
+            } else {
+                header('Location: ../users/user_dashboard.php');
+            }
+            exit();
+        } else {
+            echo "Usuario o contraseña incorrecta";
+        }
 
-    if ($user && password_verify($password, $user['password'])) {
-        // Iniciar sesión y almacenar datos del usuario
-        echo "Login exitoso";
+        // Cierra la sentencia
+        $stmt->close();
     } else {
-        echo "Usuario o contraseña incorrecta";
+        echo "Error en la preparación de la consulta: " . $conn->error;
     }
 }
 
-// Función de Admin
-if ($user && password_verify($password, $user['password'])) {
-    if ($user['role'] == 'admin') {
-        // Redirigir al panel de administración
-        header('Location: admin_dashboard.php');
-        exit();
-    } else {
-        // Redirigir al área de usuario normal
-        header('Location: user_dashboard.php');
-        exit();
-    }
-} else {
-    echo "Usuario o contraseña incorrecta";
+// Función de logout
+if ($_GET['action'] == 'logout') {
+    session_destroy();
+    header('Location: ../users/login.html');
+    exit();
 }
-
 ?>

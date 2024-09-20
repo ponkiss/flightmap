@@ -1,3 +1,15 @@
+<?php
+// Iniciar la sesión
+session_start();
+
+// Verificar si el usuario está autenticado y tiene el rol adecuado
+if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'user') {
+    // Redirigir al login si no está autenticado
+    header('Location: login.html');
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,26 +17,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
-    
-    <!-- Leaflet para mostrar mapas -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    
     <title>Buscar | Flightmap</title>
 </head>
 <body>
+    <!-- Encabezado con logo y navegación -->
     <header>
         <div class="logo">
-            <a href="../index.html">
+            <a href="user_dashboard.php">
                 <img src="../assets/images/logo.png" alt="Logo de Flightmap">
             </a>
         </div>        
         <nav>
-            <a href="../users/login.html">Iniciar Sesión</a>
-            <a href="../users/register.html">Registrarse</a>
-            <a href="search.html">Buscar Vuelos</a>
+            <a href="../index.html">Cerrar Sesión</a>
+            <a href="../users/register.html">Agendar una Reservación</a>
+            <a href="user_search.php">Buscar Vuelos</a>
         </nav>
     </header>
 
+    <!-- Contenido principal de la página -->
     <main>
+        <!-- Imagen de fondo decorativa -->
         <div class="background-image"></div>
         <h1>Vuelos Disponibles</h1>
 
@@ -44,6 +58,7 @@
         <div id="map" class="map-container"></div>
     </main>
 
+    <!-- Pie de página con derechos reservados -->
     <footer>
         <p class="footer">&copy; 2024 TDM42. Todos los derechos reservados.</p>
     </footer>
@@ -57,7 +72,7 @@
 
         // Cargar vuelos al iniciar la página
         window.onload = async () => {
-            const response = await fetch('search_flights.php');
+            const response = await fetch('../search/search_flights.php');
             const flights = await response.json();
 
             // Mostrar los vuelos en la tabla
@@ -71,6 +86,7 @@
                     <td>${flight.arrival_time}</td>
                     <td>${flight.price}</td>
                 `;
+                // Asignar un evento de clic para mostrar el mapa
                 row.onclick = () => toggleMap(flight.origin, flight.destination, row);
                 resultadosTable.appendChild(row);
             });
@@ -78,7 +94,7 @@
 
         // Función para mostrar/ocultar el mapa con la distancia
         const toggleMap = async (origin, destination, selectedRow) => {
-            // Si la fila ya está activa (el mapa ya está visible), ocultar el mapa
+            // Si la fila ya está activa, ocultar el mapa
             if (selectedRow.classList.contains('active')) {
                 selectedRow.classList.remove('active');
                 mapContainer.classList.remove('active'); // Ocultar el mapa
@@ -119,7 +135,7 @@
                     }
                 });
                 const route = L.polyline([originCoords, destinationCoords], { color: 'blue' }).addTo(map);
-                map.fitBounds(route.getBounds());
+                map.fitBounds(route.getBounds()); // Ajustar vista al nuevo trayecto
             }
         };
     </script>

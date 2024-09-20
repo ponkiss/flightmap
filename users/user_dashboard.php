@@ -2,9 +2,9 @@
 // Iniciar la sesión
 session_start();
 
-// Verificar si el usuario ha iniciado sesión y es administrador
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'admin') {
-    // Redirigir al login si no es administrador
+// Verificar si el usuario está autenticado y tiene el rol adecuado
+if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'user') {
+    // Redirigir al login si no está autenticado
     header('Location: login.html');
     exit();
 }
@@ -21,14 +21,14 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'admin') {
     <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
     
-    <title>Admin | Flightmap</title>
+    <title>Flightmap</title>
 </head>
 <body>
     <!-- Encabezado con logo y navegación -->
     <header>
         <div class="logo">
-            <a href="admin_dashboard.php">
-                <!-- Logo del sitio enlazado al dashboard del administrador -->
+            <a href="user_dashboard.php">
+                <!-- Logo del sitio enlazado al dashboard del usuario -->
                 <img src="../assets/images/logo.png" alt="Logo de Flightmap">
             </a>
         </div>        
@@ -36,8 +36,8 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'admin') {
         <!-- Menú de navegación principal -->
         <nav>
             <a href="../index.html">Cerrar Sesión</a>
-            <a href="register.html">Administrar Reservaciones</a>
-            <a href="../flights/manage_flights.php">Administrar Vuelos</a>
+            <a href="register.html">Agendar una Reservación</a>
+            <a href="user_search.php">Buscar Vuelos</a>
         </nav>
     </header>
 
@@ -49,12 +49,12 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'admin') {
         <!-- Sección hero que saluda al usuario autenticado -->
         <section class="hero">
             <h1>Bienvenido, <?php echo htmlspecialchars($_SESSION['user']['username']); ?></h1>
-            <p>¿Qué deseas hacer hoy?</p>
+            <p>Encuentra y reserva los mejores vuelos al mejor precio.</p>
 
             <!-- Botones de acción (CTA) -->
             <div class="cta-buttons">
-                <a href="../flights/manage_flights.php" class="btn">Administrar Vuelos</a>
-                <a href="register.html" class="btn">Administrar Reservaciones</a>
+                <a href="user_search.php" class="btn">Buscar Vuelos</a>
+                <a href="register.html" class="btn">Agendar una Reservación</a>
             </div>
         </section>
     </main>

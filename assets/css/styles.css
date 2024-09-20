@@ -6,56 +6,39 @@ body {
     color: #333;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    min-height: 100vh;
+    justify-content: flex-start;
+    height: 100vh;
     text-align: center;
     line-height: 1.6;
     scroll-behavior: smooth;
     position: relative;
-    overflow: hidden; /* Para asegurar que no se salga el fondo */
+    overflow-x: hidden;
 }
 
-/* Contenedor de la imagen de fondo */
 .background-image {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('../images/bg.jpg'); /* Ruta de la imagen */
-    background-size: 100%; /* Tamaño de la imagen ajustado al 50% */
-    background-repeat: no-repeat; /* Evitar que se repita */
-    background-position: center; /* Centrar la imagen */
-    opacity: 0.1; /* Opacidad del 20% */
-    z-index: -1; /* Colocar la imagen detrás del contenido */
+    background-image: url('../images/bg.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.1;
+    z-index: -1;
 }
 
-/* Pseudo-elemento para aplicar la opacidad solo al fondo */
-body::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: inherit; /* Usar la misma imagen de fondo */
-    background-size: inherit;
-    background-repeat: inherit;
-    background-position: inherit;
-    opacity: 0.2; /* Opacidad del 20% */
-    z-index: -1; /* Colocar la imagen detrás del contenido */
-}
 header {
     background-color: #007BFF;
     padding: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     position: sticky;
     top: 0;
     z-index: 1000;
-    animation: fadeInDown 1s ease;
+    animation: fadeIn 1s ease;
 }
 
 .logo img {
@@ -78,6 +61,7 @@ nav a:hover, nav a:focus {
 }
 
 main {
+    flex: 1;
     text-align: center;
     padding: 50px 20px;
     animation: fadeIn 1s ease;
@@ -88,6 +72,12 @@ h1 {
     color: #007BFF;
     margin-bottom: 20px;
     animation: fadeIn 1s ease;
+}
+
+h2 {
+    font-size: 2.2em;
+    color: #007BFF;
+    margin-top: 30px;
 }
 
 p {
@@ -158,7 +148,6 @@ button:active {
     color: white;
     font-weight: 600;
     transition: background-color 0.3s ease, transform 0.2s ease;
-
 }
 
 .cta-buttons .btn:hover, .cta-buttons .btn:focus {
@@ -179,21 +168,77 @@ footer {
     padding: 20px;
     background-color: #ffffff;
     color: white;
-    position: relative;
-    bottom: 0;
-    animation: fadeInUp 1s ease;
-
+    width: 100%;
+    animation: fadeIn 1s ease;
 }
 
-footer a {
+/* Estilos para la tabla de vuelos */
+.flight-table {
+    width: 100%;
+    max-width: 1000px;
+    margin: 30px auto;
+    border-collapse: collapse;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.flight-table th, .flight-table td {
+    padding: 15px 20px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f5;
+}
+
+.flight-table th {
+    background-color: #007BFF;
     color: white;
-    text-decoration: none;
-    font-weight: 600;
+    font-weight: bold;
 }
 
-footer a:hover, footer a:focus {
-    text-decoration: underline;
-    color: #ffdd57;
+.flight-table td {
+    color: #333;
+}
+
+.flight-table tr:hover {
+    background-color: #f1f9ff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Estilo para la fila activa cuando se selecciona un vuelo */
+.flight-table tr.active {
+    background-color: #ffdd57;
+    color: #007BFF;
+}
+
+/* Contenedor del mapa */
+.map-container {
+    width: 100%;
+    max-width: 1000px;
+    height: 400px;
+    margin: 30px auto;
+    border-radius: 10px;
+    overflow: hidden;
+    display: none; /* Oculto por defecto */
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+/* Animación para mostrar el mapa */
+@keyframes fadeInMap {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.map-container.active {
+    display: block;
+    animation: fadeInMap 0.5s ease;
 }
 
 @keyframes fadeInDown {

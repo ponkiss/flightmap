@@ -1,15 +1,11 @@
 <?php
-include 'db.php'; // Conexión a la base de datos
+include '../includes/db.php'; // Conexión a la base de datos
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $origin = $_POST['origin'];
-    $destination = $_POST['destination'];
-    $departure_time = $_POST['departure_time'];
+// Obtener todos los vuelos de la base de datos
+$sql = "SELECT * FROM Flights";
+$result = mysqli_query($conn, $sql);
+$flights = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-    $sql = "SELECT * FROM Flights WHERE origin = '$origin' AND destination = '$destination' AND departure_time >= '$departure_time'";
-    $result = mysqli_query($conn, $sql);
-    $flights = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-    echo json_encode($flights);
-}
+// Devolver los vuelos como JSON
+echo json_encode($flights);
 ?>
