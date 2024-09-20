@@ -1,39 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Metaetiquetas esenciales para la codificación de caracteres y diseño responsivo -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Vinculación a los estilos y favicon -->
     <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
-    <title>Search | Flightmap</title>
+    
+    <title>Buscar | Flightmap</title>
 </head>
 <body>
+    <!-- Encabezado que incluye el logo y la barra de navegación -->
     <header>
         <div class="logo">
             <a href="../index.html">
+                <!-- Logo de Flightmap con enlace a la página principal -->
                 <img src="../assets/images/logo.png" alt="Logo de Flightmap">
             </a>
         </div>        
+
+        <!-- Menú de navegación principal -->
         <nav>
-            <a href="login.html">Iniciar Sesión</a>
-            <a href="register.html">Registrarse</a>
-            <a href="search/search.html">Buscar Vuelos</a>
+            <a href="../users/login.html">Iniciar Sesión</a>
+            <a href="../users/register.html">Registrarse</a>
+            <a href="search.html">Buscar Vuelos</a>
         </nav>
     </header>
 
+    <!-- Contenido principal de la página -->
     <main>
+        <!-- Imagen de fondo decorativa -->
+        <div class="background-image"></div>
+
+        <!-- Título de la página -->
         <h1>Buscar Vuelos</h1>
+
+        <!-- Formulario para buscar vuelos -->
         <form action="search_flights.php" method="POST">
+            <!-- Campo de entrada para el origen -->
             <input type="text" name="origin" placeholder="Origen" required><br>
+            <!-- Campo de entrada para el destino -->
             <input type="text" name="destination" placeholder="Destino" required><br>
+            <!-- Campo para seleccionar la fecha y hora de salida -->
             <input type="datetime-local" name="departure_time" required><br>
+            <!-- Botón para enviar el formulario -->
             <button type="submit">Buscar</button>
         </form>
+
+        <!-- Sección donde se mostrarán los resultados de la búsqueda -->
         <div id="resultados"></div>
     </main>
 
+    <!-- Pie de página con los derechos reservados -->
     <footer>
-        <p>&copy; 2024 Sistema de Reservas de Vuelos. Todos los derechos reservados.</p>
+        <p class="footer">&copy; 2024 TDM42. Todos los derechos reservados.</p>
     </footer>
 </body>
 </html>

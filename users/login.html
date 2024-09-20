@@ -1,25 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Metaetiquetas esenciales para la codificación de caracteres y diseño responsivo -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <title>Iniciar Sesión | Flightmap</title>
+
+    <!-- Vinculación a los estilos y favicon -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+    
+    <title>Login | Flightmap</title>
 </head>
 <body>
+    <!-- Encabezado de la página que contiene el logo y la barra de navegación -->
     <header>
         <div class="logo">
-            <img src="logo.png" alt="Logo del Sistema de Reservas">
-        </div>
+            <a href="../index.html">
+                <!-- Logo del sitio -->
+                <img src="../assets/images/logo.png" alt="Logo de Flightmap">
+            </a>
+        </div>        
+
+        <!-- Navegación principal -->
         <nav>
             <a href="login.html">Iniciar Sesión</a>
             <a href="register.html">Registrarse</a>
-            <a href="search.html">Buscar Vuelos</a>
+            <a href="../search/search.html">Buscar Vuelos</a>
         </nav>
     </header>
 
+    <!-- Contenido principal -->
     <main>
+        <!-- Imagen de fondo decorativa -->
+        <div class="background-image"></div>
+
         <h1>Iniciar Sesión</h1>
         <form action="auth.php?action=login" method="POST">
             <input type="text" name="username" placeholder="Nombre de Usuario" required><br>
@@ -28,8 +42,9 @@
         </form>
     </main>
 
+    <!-- Pie de página con los derechos reservados -->
     <footer>
-        <p>&copy; 2024 Sistema de Reservas de Vuelos. Todos los derechos reservados.</p>
+        <p class="footer">&copy; 2024 TDM42. Todos los derechos reservados.</p>
     </footer>
 </body>
 </html>

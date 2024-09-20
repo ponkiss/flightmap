@@ -26,7 +26,7 @@ body {
     background-size: 100%; /* Tamaño de la imagen ajustado al 50% */
     background-repeat: no-repeat; /* Evitar que se repita */
     background-position: center; /* Centrar la imagen */
-    opacity: 0.2; /* Opacidad del 20% */
+    opacity: 0.1; /* Opacidad del 20% */
     z-index: -1; /* Colocar la imagen detrás del contenido */
 }
 
@@ -55,16 +55,12 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    animation: fadeInDown 1s ease;
 }
 
 .logo img {
     height: 50px;
     width: auto;
-    transition: transform 0.3s ease;
-}
-
-.logo img:hover {
-    transform: scale(1.05);
 }
 
 nav a {
@@ -91,7 +87,7 @@ h1 {
     font-size: 2.8em;
     color: #007BFF;
     margin-bottom: 20px;
-    animation: fadeInDown 1s ease;
+    animation: fadeIn 1s ease;
 }
 
 p {
@@ -162,7 +158,7 @@ button:active {
     color: white;
     font-weight: 600;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
+
 }
 
 .cta-buttons .btn:hover, .cta-buttons .btn:focus {
@@ -185,6 +181,7 @@ footer {
     color: white;
     position: relative;
     bottom: 0;
+    animation: fadeInUp 1s ease;
 
 }
 
@@ -203,6 +200,17 @@ footer a:hover, footer a:focus {
     from {
         opacity: 0;
         transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
     to {
         opacity: 1;

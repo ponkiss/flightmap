@@ -1,35 +1,58 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
+    <!-- Metaetiquetas esenciales para la codificación de caracteres y diseño responsivo -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Usuario</title>
-    <link rel="stylesheet" href="styles.css">
+
+    <!-- Vinculación a los estilos y favicon -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+    
+    <title>Registro | Flightmap</title>
 </head>
 <body>
+    <!-- Encabezado que contiene el logo y la barra de navegación -->
     <header>
         <div class="logo">
-            <img src="logo.png" alt="Logo del Sistema de Reservas">
-        </div>
+            <a href="../index.html">
+                <!-- Logo de Flightmap con enlace a la página principal -->
+                <img src="../assets/images/logo.png" alt="Logo de Flightmap">
+            </a>
+        </div>        
+
+        <!-- Menú de navegación principal -->
         <nav>
             <a href="login.html">Iniciar Sesión</a>
             <a href="register.html">Registrarse</a>
-            <a href="search.html">Buscar Vuelos</a>
+            <a href="../search/search.html">Buscar Vuelos</a>
         </nav>
     </header>
 
+    <!-- Contenido principal de la página -->
     <main>
+        <!-- Imagen de fondo decorativa -->
+        <div class="background-image"></div>
+
+        <!-- Título de la página -->
         <h1>Registro de Usuario</h1>
+
+        <!-- Formulario de registro -->
         <form action="auth.php?action=register" method="POST">
+            <!-- Campo de entrada para el nombre de usuario -->
             <input type="text" name="username" placeholder="Nombre de Usuario" required><br>
+            <!-- Campo de entrada para la contraseña -->
             <input type="password" name="password" placeholder="Contraseña" required><br>
+            <!-- Campo de entrada para el correo electrónico -->
             <input type="email" name="email" placeholder="Correo Electrónico" required><br>
+            <!-- Botón para enviar el formulario -->
             <button type="submit">Registrarse</button>
         </form>
     </main>
 
+    <!-- Pie de página con los derechos reservados -->
     <footer>
-        <p>&copy; 2024 Sistema de Reservas de Vuelos. Todos los derechos reservados.</p>
+        <p class="footer">&copy; 2024 TDM42. Todos los derechos reservados.</p>
     </footer>
 </body>
 </html>
