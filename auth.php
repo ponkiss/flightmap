@@ -31,4 +31,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_GET['action'] == 'login') {
         echo "Usuario o contraseña incorrecta";
     }
 }
+
+// Función de Admin
+if ($user && password_verify($password, $user['password'])) {
+    if ($user['role'] == 'admin') {
+        // Redirigir al panel de administración
+        header('Location: admin_dashboard.php');
+        exit();
+    } else {
+        // Redirigir al área de usuario normal
+        header('Location: user_dashboard.php');
+        exit();
+    }
+} else {
+    echo "Usuario o contraseña incorrecta";
+}
+
 ?>
