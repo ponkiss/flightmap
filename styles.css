@@ -9,6 +9,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     min-height: 100vh;
+    text-align: center;
 }
 
 /* Header */
@@ -55,12 +56,35 @@ p {
     color: #555;
 }
 
-p.footer {
-    font-size: 1.2em;
-    margin-bottom: 40px;
-    color: #ffffff;
+/* Form Styles */
+form input, form button {
+    margin: 10px 0;
+    padding: 15px;
+    width: 80%;
+    max-width: 400px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 25px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 80%;
+    max-width: 400px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* CTA Buttons for Index */
 .cta-buttons {
     display: flex;
     justify-content: center;
