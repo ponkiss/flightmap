@@ -56,8 +56,12 @@ Este proyecto es una plataforma web simple para la consulta y agendación de res
 ├── users
 │   ├── admin_dashboard.php          # Panel de control del administrador
 │   ├── login.html                   # Página de inicio de sesión
+│   ├── manage_reservation.php       # Gestión de reservaciones
 │   ├── register.html                # Página de registro de usuarios
-│   └── user_dashboard.php           # Panel de control del usuario
+│   ├── user_dashboard.php           # Panel de control del usuario
+│   └── user_search.php              # Página para búsqueda de vuelos (usuario)
+├── flight_reservations.sql
+├── index.html
 ├── LICENSE
 └── README.md
 ```
