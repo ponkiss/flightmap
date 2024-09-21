@@ -1,21 +1,23 @@
 <?php
-// Iniciar la sesión
 session_start();
 
-// Verificar si el usuario está autenticado y tiene el rol adecuado
+// Verificar si el usuario ha iniciado sesión y si tiene el rol adecuado
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'user') {
     header('Location: login.html');
     exit();
 }
 
-include '../includes/db.php'; // Conexión a la base de datos
+include '../includes/db.php';
 
-// Si se hace una reserva
+$notification = "";
+$notification_type = "";
+
+// Verificar si se ha enviado un formulario para reservar un vuelo
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['flight_id'])) {
     $user_id = $_SESSION['user']['id'];
     $flight_id = $_POST['flight_id'];
 
-    // Verificar si el vuelo ya fue reservado por otro usuario
+    // Comprobar si el vuelo ya ha sido reservado
     $check_sql = "SELECT * FROM Reservations WHERE flight_id = ?";
     $stmt = $conn->prepare($check_sql);
     $stmt->bind_param('i', $flight_id);
@@ -23,24 +25,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['flight_id'])) {
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        echo "<p>Este vuelo ya ha sido reservado por otro usuario.</p>";
+        // Notificación si el vuelo ya fue reservado
+        $notification = "Este vuelo ya ha sido reservado por otro usuario.";
+        $notification_type = "error";
     } else {
-        // Insertar la reservación en la base de datos
+        // Insertar una nueva reservación
         $sql = "INSERT INTO Reservations (user_id, flight_id) VALUES (?, ?)";
-        $stmt = $conn->prepare($sql);
+        $stmt->prepare($sql);
         $stmt->bind_param('ii', $user_id, $flight_id);
 
         if ($stmt->execute()) {
-            echo "<p>Reservación exitosa.</p>";
+            // Notificación de éxito
+            $notification = "Reservación exitosa.";
+            $notification_type = "success";
         } else {
-            echo "<p>Error al hacer la reservación: " . $stmt->error . "</p>";
+            // Notificación de error
+            $notification = "Error al hacer la reservación: " . $stmt->error;
+            $notification_type = "error";
         }
     }
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es"> <!-- Cambié a "es" ya que el contenido está en español -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['flight_id'])) {
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     
-    <title>Reservaciones | Flightmap</title>
+    <title>Vuelos y Reservaciones | Flightmap</title>
 </head>
 <body>
     <header>
@@ -58,14 +66,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['flight_id'])) {
             </a>
         </div>        
         <nav>
-            <a href="../index.html">Cerrar Sesión</a>
-            <a href="user_search.php">Agendar una Reservación</a>
-            <a href="user_search.php">Buscar Vuelos</a>
+            <a href="../index.html">Cerrar sesión</a>
+            <a href="user_search.php">Agendar una reservación</a>
+            <a href="manage_reservation.php">Mis reservaciones</a>
+            <a href="user_search.php">Buscar vuelos</a>
         </nav>
     </header>
 
     <main>
-        <h1>Vuelos Disponibles</h1>
+        <div class="background-image"></div>
+        <h1>Vuelos y Reservaciones Disponibles</h1>
+
+        <!-- Mostrar notificación si existe -->
+        <?php if ($notification): ?>
+        <div class="notification <?php echo $notification_type; ?>">
+            <?php echo $notification; ?>
+        </div>
+        <?php endif; ?>
+
+        <!-- Tabla de vuelos -->
         <table class="flight-table" id="resultados">
             <tr>
                 <th>Número de Vuelo</th>
@@ -85,6 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['flight_id'])) {
         <p class="footer">&copy; 2024 TDM42. Todos los derechos reservados.</p>
     </footer>
 
+    <!-- Scripts para cargar el mapa y manejar la lógica -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
         const resultadosTable = document.getElementById('resultados');
@@ -92,11 +112,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['flight_id'])) {
         let map;
 
         window.onload = async () => {
+            const userId = <?php echo $_SESSION['user']['id']; ?>;
             const response = await fetch('../search/search_flights.php');
             const flights = await response.json();
 
-            flights.forEach(flight => {
+            for (const flight of flights) {
                 const row = document.createElement('tr');
+
+                const reservationResponse = await fetch(`../search/check_reservation.php?flight_id=${flight.id}&user_id=${userId}`);
+                const reservationData = await reservationResponse.json();
+                const isReserved = reservationData.reserved;
+                const isUserReservation = reservationData.is_user_reservation;
+
                 row.innerHTML = `
                     <td>${flight.flight_number}</td>
                     <td>${flight.origin}</td>
@@ -105,15 +132,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['flight_id'])) {
                     <td>${flight.arrival_time}</td>
                     <td>${flight.price}</td>
                     <td>
-                        <form method="POST">
-                            <input type="hidden" name="flight_id" value="${flight.id}">
-                            <button type="submit">Reservar</button>
-                        </form>
+                        ${isUserReservation ? 
+                            `<a href="manage_reservation.php?flight_id=${flight.id}" class="btn">Gestionar</a>` : 
+                            `<form method="POST">
+                                <input type="hidden" name="flight_id" value="${flight.id}">
+                                <button type="submit" ${isReserved ? 'disabled' : ''}>
+                                    ${isReserved ? 'Reservado' : 'Reservar'}
+                                </button>
+                            </form>`
+                        }
                     </td>
                 `;
+
+                // Cambiar el color si el vuelo está reservado
+                if (isReserved) {
+                    row.style.backgroundColor = 'lightgray';
+                }
+
                 row.onclick = () => toggleMap(flight.origin, flight.destination, row);
                 resultadosTable.appendChild(row);
-            });
+            }
         };
 
         const toggleMap = async (origin, destination, selectedRow) => {
@@ -136,6 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['flight_id'])) {
                 }).addTo(map);
             }
 
+            // Obtener coordenadas de origen y destino
             const getCoordinates = async (location) => {
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`);
                 const data = await res.json();
@@ -145,6 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['flight_id'])) {
             const originCoords = await getCoordinates(origin);
             const destinationCoords = await getCoordinates(destination);
 
+            // Mostrar la ruta en el mapa
             if (originCoords && destinationCoords) {
                 map.eachLayer((layer) => {
                     if (!!layer.toGeoJSON) {

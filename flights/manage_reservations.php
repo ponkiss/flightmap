@@ -1,24 +1,26 @@
 <?php
-include '../includes/db.php'; // Conexión a la base de datos
+include '../includes/db.php'; // Incluye el archivo de conexión a la base de datos
 
-// Manejar la solicitud POST para eliminar una reservación
+// Verifica si se ha enviado un formulario
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Verifica si se ha solicitado eliminar una reservación
     if (isset($_POST['delete_reservation'])) {
-        $id = intval($_POST['id']);
+        $id = intval($_POST['id']); // Convierte el ID a entero
+        // Consulta para eliminar la reservación
         $sql = "DELETE FROM Reservations WHERE id='$id'";
+        // Mensaje de éxito o error al eliminar la reservación
         $message = mysqli_query($conn, $sql) ? "Reservación eliminada con éxito" : "Error al eliminar reservación: " . mysqli_error($conn);
     }
 }
 
-// Obtener todas las reservaciones con detalles del vuelo y del usuario
-$sql = "SELECT Reservations.id as reservation_id, Flights.flight_number, Flights.origin, Flights.destination, Flights.departure_time, Flights.arrival_time, 
-        Users.username, Users.email 
+// Consulta para obtener las reservaciones actuales
+$sql = "SELECT Reservations.id AS reservation_id, Flights.flight_number, Flights.origin, Flights.destination, 
+        Flights.departure_time, Flights.arrival_time, Users.username, Users.email 
         FROM Reservations 
         JOIN Flights ON Reservations.flight_id = Flights.id 
         JOIN Users ON Reservations.user_id = Users.id";
 $result = mysqli_query($conn, $sql);
-$reservations = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
+$reservations = mysqli_fetch_all($result, MYSQLI_ASSOC); // Obtiene todas las reservaciones
 ?>
 
 <!DOCTYPE html>
@@ -32,6 +34,7 @@ $reservations = mysqli_fetch_all($result, MYSQLI_ASSOC);
 </head>
 <body>
     <header>
+        <!-- Logo con enlace al panel de administración -->
         <div class="logo">
             <a href="../users/admin_dashboard.php">
                 <img src="../assets/images/logo.png" alt="Logo de Flightmap">
@@ -49,12 +52,13 @@ $reservations = mysqli_fetch_all($result, MYSQLI_ASSOC);
         <h1>Administrar Reservaciones</h1>
 
         <?php if (isset($message)): ?>
-            <p><?php echo $message; ?></p>
+        <div class="notification <?php echo strpos($message, 'Error') !== false ? 'error' : 'success'; ?>">
+            <?php echo $message; ?> <!-- Muestra el mensaje de éxito o error -->
+        </div>
         <?php endif; ?>
 
-        <!-- Tabla de reservaciones -->
         <h2>Reservaciones Actuales</h2>
-        <table class="reservation-table">
+        <table class="flight-table">
             <thead>
                 <tr>
                     <th>Usuario</th>
@@ -70,18 +74,19 @@ $reservations = mysqli_fetch_all($result, MYSQLI_ASSOC);
             <tbody>
                 <?php foreach ($reservations as $reservation): ?>
                 <tr>
-                    <td><?php echo $reservation['username']; ?></td>
-                    <td><?php echo $reservation['email']; ?></td>
-                    <td><?php echo $reservation['flight_number']; ?></td>
-                    <td><?php echo $reservation['origin']; ?></td>
-                    <td><?php echo $reservation['destination']; ?></td>
-                    <td><?php echo $reservation['departure_time']; ?></td>
-                    <td><?php echo $reservation['arrival_time']; ?></td>
+                    <td><?php echo htmlspecialchars($reservation['username']); ?></td> <!-- Sanitización de entrada -->
+                    <td><?php echo htmlspecialchars($reservation['email']); ?></td>
+                    <td><?php echo htmlspecialchars($reservation['flight_number']); ?></td>
+                    <td><?php echo htmlspecialchars($reservation['origin']); ?></td>
+                    <td><?php echo htmlspecialchars($reservation['destination']); ?></td>
+                    <td><?php echo htmlspecialchars($reservation['departure_time']); ?></td>
+                    <td><?php echo htmlspecialchars($reservation['arrival_time']); ?></td>
                     <td>
+                        <!-- Formulario para eliminar la reservación -->
                         <form action="manage_reservations.php" method="POST" style="display:inline;">
                             <input type="hidden" name="id" value="<?php echo $reservation['reservation_id']; ?>">
                             <input type="hidden" name="delete_reservation" value="1">
-                            <button type="submit" onclick="return confirm('¿Estás seguro de eliminar esta reservación?')">Eliminar</button>
+                            <button type="submit" class="btn-eliminar" onclick="return confirm('¿Estás seguro de eliminar esta reservación?')">Eliminar</button>
                         </form>
                     </td>
                 </tr>

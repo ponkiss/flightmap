@@ -1,49 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es"> <!-- El idioma está configurado en español -->
 <head>
-    <!-- Metaetiquetas esenciales para la codificación de caracteres y diseño responsivo -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Vinculación a los estilos y favicon -->
+    
+    <!-- Enlace a la hoja de estilos CSS -->
     <link rel="stylesheet" href="../assets/css/styles.css">
+    
+    <!-- Favicon del sitio web -->
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
     
-    <title>Login | Flightmap</title>
+    <!-- Título de la página -->
+    <title>Iniciar sesión | Flightmap</title>
 </head>
 <body>
-    <!-- Encabezado de la página que contiene el logo y la barra de navegación -->
     <header>
+        <!-- Logo del sitio web con enlace a la página principal -->
         <div class="logo">
             <a href="../index.html">
-                <!-- Logo del sitio -->
                 <img src="../assets/images/logo.png" alt="Logo de Flightmap">
             </a>
         </div>        
 
-        <!-- Navegación principal -->
+        <!-- Barra de navegación -->
         <nav>
-            <a href="login.html">Iniciar Sesión</a>
+            <a href="login.html">Iniciar sesión</a>
             <a href="register.html">Registrarse</a>
-            <a href="../search/search.html">Buscar Vuelos</a>
+            <a href="../search/search.html">Buscar vuelos</a>
         </nav>
     </header>
 
-    <!-- Contenido principal -->
     <main>
-        <!-- Imagen de fondo decorativa -->
+        <!-- Imagen de fondo -->
         <div class="background-image"></div>
 
-        <h1>Iniciar Sesión</h1>
+        <h1>Iniciar sesión</h1>
+
+        <!-- Formulario de inicio de sesión -->
         <form action="../includes/auth.php?action=login" method="POST">
             <input type="text" name="username" placeholder="Nombre de Usuario" required><br>
             <input type="password" name="password" placeholder="Contraseña" required><br>
-            <button type="submit">Iniciar Sesión</button>
+            <button type="submit">Iniciar sesión</button> <!-- Corrección de capitalización en "Iniciar sesión" -->
         </form>
     </main>
 
-    <!-- Pie de página con los derechos reservados -->
     <footer>
+        <!-- Pie de página -->
         <p class="footer">&copy; 2024 TDM42. Todos los derechos reservados.</p>
     </footer>
 </body>

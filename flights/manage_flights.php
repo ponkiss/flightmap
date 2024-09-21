@@ -1,15 +1,14 @@
 <?php
-include '../includes/db.php'; // Conexión a la base de datos
+include '../includes/db.php'; // Incluye el archivo de conexión a la base de datos
 
-// Manejar la solicitud POST para agregar, editar o eliminar un vuelo
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Eliminar vuelo
+    // Manejo de eliminación de vuelo
     if (isset($_POST['delete_flight'])) {
         $id = intval($_POST['id']);
         $sql = "DELETE FROM Flights WHERE id='$id'";
-        $message = mysqli_query($conn, $sql) ? "Vuelo eliminado con éxito" : "Error al eliminar vuelo: " . mysqli_error($conn);
+        $message = mysqli_query($conn, $sql) ? "Vuelo eliminado con éxito." : "Error al eliminar vuelo: " . mysqli_error($conn);
     } else {
-        // Agregar o editar vuelo
+        // Recopila los datos del vuelo
         $flight_number = mysqli_real_escape_string($conn, $_POST['flight_number']);
         $origin = mysqli_real_escape_string($conn, $_POST['origin']);
         $destination = mysqli_real_escape_string($conn, $_POST['destination']);
@@ -17,28 +16,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $arrival_time = mysqli_real_escape_string($conn, $_POST['arrival_time']);
         $price = mysqli_real_escape_string($conn, $_POST['price']);
 
-        // Verificar si se está editando un vuelo existente
         if (!empty($_POST['id'])) {
+            // Actualiza vuelo existente
             $id = intval($_POST['id']);
             $sql = "UPDATE Flights SET flight_number='$flight_number', origin='$origin', destination='$destination', 
                     departure_time='$departure_time', arrival_time='$arrival_time', price='$price' WHERE id='$id'";
-            $message = mysqli_query($conn, $sql) ? "Vuelo actualizado con éxito" : "Error al actualizar vuelo: " . mysqli_error($conn);
+            $message = mysqli_query($conn, $sql) ? "Vuelo actualizado con éxito." : "Error al actualizar vuelo: " . mysqli_error($conn);
         } else {
-            // Agregar un nuevo vuelo
+            // Agrega nuevo vuelo
             $sql = "INSERT INTO Flights (flight_number, origin, destination, departure_time, arrival_time, price) 
                     VALUES ('$flight_number', '$origin', '$destination', '$departure_time', '$arrival_time', '$price')";
-            $message = mysqli_query($conn, $sql) ? "Vuelo agregado con éxito" : "Error al agregar vuelo: " . mysqli_error($conn);
+            $message = mysqli_query($conn, $sql) ? "Vuelo agregado con éxito." : "Error al agregar vuelo: " . mysqli_error($conn);
         }
     }
 }
 
-// Obtener todos los vuelos
+// Obtiene todos los vuelos
 $sql = "SELECT * FROM Flights";
 $result = mysqli_query($conn, $sql);
 $flights = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-// Manejar la edición de un vuelo específico
-$edit_flight = null;
+$edit_flight = null; // Inicializa variable para editar vuelo
 if (!empty($_GET['edit_id'])) {
     $edit_id = intval($_GET['edit_id']);
     $sql = "SELECT * FROM Flights WHERE id = '$edit_id'";
@@ -64,7 +62,7 @@ if (!empty($_GET['edit_id'])) {
             </a>
         </div>        
         <nav>
-            <a href="../index.html">Cerrar Sesión</a>
+            <a href="../index.html">Cerrar sesión</a>
             <a href="manage_reservations.php">Administrar Reservaciones</a>
             <a href="manage_flights.php">Administrar Vuelos</a>
         </nav>
@@ -75,10 +73,11 @@ if (!empty($_GET['edit_id'])) {
         <h1>Administrar Vuelos</h1>
 
         <?php if (isset($message)): ?>
-            <p><?php echo $message; ?></p>
+            <div class="notification <?php echo strpos($message, 'Error') !== false ? 'error' : 'success'; ?>">
+                <?php echo $message; ?>
+            </div>
         <?php endif; ?>
 
-        <!-- Formulario de agregar o editar vuelo -->
         <h2><?php echo $edit_flight ? 'Editar Vuelo' : 'Agregar Vuelo'; ?></h2>
         <form action="manage_flights.php" method="POST">
             <input type="hidden" name="id" value="<?php echo $edit_flight['id'] ?? ''; ?>">
@@ -91,7 +90,6 @@ if (!empty($_GET['edit_id'])) {
             <button type="submit"><?php echo $edit_flight ? 'Actualizar Vuelo' : 'Agregar Vuelo'; ?></button>
         </form>
 
-        <!-- Tabla de vuelos -->
         <h2>Vuelos Disponibles</h2>
         <table class="flight-table">
             <thead>
@@ -107,22 +105,22 @@ if (!empty($_GET['edit_id'])) {
             </thead>
             <tbody>
                 <?php foreach ($flights as $flight): ?>
-                <tr>
-                    <td><?php echo $flight['flight_number']; ?></td>
-                    <td><?php echo $flight['origin']; ?></td>
-                    <td><?php echo $flight['destination']; ?></td>
-                    <td><?php echo $flight['departure_time']; ?></td>
-                    <td><?php echo $flight['arrival_time']; ?></td>
-                    <td><?php echo $flight['price']; ?></td>
-                    <td>
-                        <a href="manage_flights.php?edit_id=<?php echo $flight['id']; ?>">Editar</a> |
-                        <form action="manage_flights.php" method="POST" style="display:inline;">
-                            <input type="hidden" name="id" value="<?php echo $flight['id']; ?>">
-                            <input type="hidden" name="delete_flight" value="1">
-                            <button type="submit" onclick="return confirm('¿Estás seguro de eliminar este vuelo?')">Eliminar</button>
-                        </form>
-                    </td>
-                </tr>
+                    <tr>
+                        <td><?php echo $flight['flight_number']; ?></td>
+                        <td><?php echo $flight['origin']; ?></td>
+                        <td><?php echo $flight['destination']; ?></td>
+                        <td><?php echo $flight['departure_time']; ?></td>
+                        <td><?php echo $flight['arrival_time']; ?></td>
+                        <td><?php echo $flight['price']; ?></td>
+                        <td>
+                            <a href="manage_flights.php?edit_id=<?php echo $flight['id']; ?>" class="btn-editar">Editar</a>
+                            <form action="manage_flights.php" method="POST" style="display:inline;">
+                                <input type="hidden" name="id" value="<?php echo $flight['id']; ?>">
+                                <input type="hidden" name="delete_flight" value="1">
+                                <button type="submit" class="btn-eliminar" onclick="return confirm('¿Estás seguro de eliminar este vuelo?')">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>

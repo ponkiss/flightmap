@@ -6,12 +6,10 @@ body {
     color: #333;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     height: 100vh;
     text-align: center;
     line-height: 1.6;
     scroll-behavior: smooth;
-    position: relative;
     overflow-x: hidden;
 }
 
@@ -21,10 +19,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('../images/bg.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
+    background: url('../images/bg.jpg') center/cover no-repeat;
     opacity: 0.1;
     z-index: -1;
 }
@@ -38,12 +33,10 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
-    animation: fadeIn 1s ease;
 }
 
 .logo img {
     height: 50px;
-    width: auto;
 }
 
 nav a {
@@ -62,31 +55,28 @@ nav a:hover, nav a:focus {
 
 main {
     flex: 1;
-    text-align: center;
     padding: 50px 20px;
-    animation: fadeIn 1s ease;
+}
+
+h1, h2 {
+    color: #007BFF;
+    margin-bottom: 20px;
 }
 
 h1 {
     font-size: 2.8em;
-    color: #007BFF;
-    margin-bottom: 20px;
-    animation: fadeIn 1s ease;
 }
 
 h2 {
     font-size: 2.2em;
-    color: #007BFF;
     margin-top: 30px;
 }
 
 p {
     font-size: 1.2em;
-    margin-bottom: 40px;
     color: #555;
+    margin: 0 auto 40px;
     max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 form input, form button {
@@ -106,7 +96,7 @@ form input:focus {
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-button {
+button, .btn {
     background-color: #007BFF;
     color: white;
     border: none;
@@ -116,17 +106,18 @@ button {
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    width: 80%;
-    max-width: 400px;
     box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
+    text-align: center;
+    display: inline-block;
+    text-decoration: none;
 }
 
-button:hover, button:focus {
+button:hover, .btn:hover, button:focus, .btn:focus {
     background-color: #0056b3;
     transform: translateY(-2px);
 }
 
-button:active {
+button:active, .btn:active {
     background-color: #004085;
     transform: translateY(0);
 }
@@ -139,27 +130,11 @@ button:active {
     margin-top: 30px;
 }
 
-.cta-buttons .btn {
-    padding: 15px 30px;
-    border-radius: 25px;
-    font-size: 1em;
-    text-decoration: none;
-    background-color: #007BFF;
-    color: white;
-    font-weight: 600;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.cta-buttons .btn:hover, .cta-buttons .btn:focus {
-    background-color: #0056b3;
-    transform: translateY(-2px);
-}
-
-.cta-buttons .btn.secondary {
+.cta-buttons .secondary {
     background-color: #6c757d;
 }
 
-.cta-buttons .btn.secondary:hover, .cta-buttons .btn.secondary:focus {
+.cta-buttons .secondary:hover, .cta-buttons .secondary:focus {
     background-color: #5a6268;
 }
 
@@ -169,10 +144,8 @@ footer {
     background-color: #ffffff;
     color: white;
     width: 100%;
-    animation: fadeIn 1s ease;
 }
 
-/* Estilos para la tabla de vuelos */
 .flight-table {
     width: 100%;
     max-width: 1000px;
@@ -196,23 +169,17 @@ footer {
     font-weight: bold;
 }
 
-.flight-table td {
-    color: #333;
-}
-
 .flight-table tr:hover {
     background-color: #f1f9ff;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-/* Estilo para la fila activa cuando se selecciona un vuelo */
 .flight-table tr.active {
     background-color: #ffdd57;
     color: #007BFF;
 }
 
-/* Contenedor del mapa */
 .map-container {
     width: 100%;
     max-width: 1000px;
@@ -220,20 +187,8 @@ footer {
     margin: 30px auto;
     border-radius: 10px;
     overflow: hidden;
-    display: none; /* Oculto por defecto */
+    display: none;
     box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
-}
-
-/* Animación para mostrar el mapa */
-@keyframes fadeInMap {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
 }
 
 .map-container.active {
@@ -241,33 +196,21 @@ footer {
     animation: fadeInMap 0.5s ease;
 }
 
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.notification {
+    padding: 15px;
+    margin: 20px auto;
+    max-width: 600px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    font-weight: 600;
+    text-align: center;
+    animation: fadeIn 0.5s ease;
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.notification.success {
+    background-color: #28a745;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+.notification.error {
+    background-color: #dc3545;
 }
