@@ -25,15 +25,15 @@ Este proyecto es una plataforma web simple para la consulta y agendación de res
 ### 🔧 Configuración e Instalación
 1. Clona el repositorio:
    ```bash
-   git clone https://github.com/tuusuario/flight-reservation-system.git
+   git clone https://github.com/ponkiss/flightmap.git
    ```
 2. Navega al directorio del proyecto:
    ```bash
-   cd flight-reservation-system
+   cd flightmap
    ```
 3. Configura tu servidor local (ej. XAMPP) y mueve los archivos al directorio adecuado (ej. `htdocs` en XAMPP).
 4. Configura la base de datos importando el archivo SQL provisto en el directorio `db`.
-5. Abre el navegador y navega a `http://localhost/flight-reservation-system`.
+5. Abre el navegador y navega a `http://localhost/flightmap`.
 
 ---
 
