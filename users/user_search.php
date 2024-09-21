@@ -4,9 +4,38 @@ session_start();
 
 // Verificar si el usuario está autenticado y tiene el rol adecuado
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'user') {
-    // Redirigir al login si no está autenticado
     header('Location: login.html');
     exit();
+}
+
+include '../includes/db.php'; // Conexión a la base de datos
+
+// Si se hace una reserva
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['flight_id'])) {
+    $user_id = $_SESSION['user']['id'];
+    $flight_id = $_POST['flight_id'];
+
+    // Verificar si el vuelo ya fue reservado por otro usuario
+    $check_sql = "SELECT * FROM Reservations WHERE flight_id = ?";
+    $stmt = $conn->prepare($check_sql);
+    $stmt->bind_param('i', $flight_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        echo "<p>Este vuelo ya ha sido reservado por otro usuario.</p>";
+    } else {
+        // Insertar la reservación en la base de datos
+        $sql = "INSERT INTO Reservations (user_id, flight_id) VALUES (?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('ii', $user_id, $flight_id);
+
+        if ($stmt->execute()) {
+            echo "<p>Reservación exitosa.</p>";
+        } else {
+            echo "<p>Error al hacer la reservación: " . $stmt->error . "</p>";
+        }
+    }
 }
 ?>
 
@@ -19,10 +48,9 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'user') {
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     
-    <title>Buscar | Flightmap</title>
+    <title>Reservaciones | Flightmap</title>
 </head>
 <body>
-    <!-- Encabezado con logo y navegación -->
     <header>
         <div class="logo">
             <a href="user_dashboard.php">
@@ -31,18 +59,13 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'user') {
         </div>        
         <nav>
             <a href="../index.html">Cerrar Sesión</a>
-            <a href="../users/register.html">Agendar una Reservación</a>
+            <a href="user_search.php">Agendar una Reservación</a>
             <a href="user_search.php">Buscar Vuelos</a>
         </nav>
     </header>
 
-    <!-- Contenido principal de la página -->
     <main>
-        <!-- Imagen de fondo decorativa -->
-        <div class="background-image"></div>
         <h1>Vuelos Disponibles</h1>
-
-        <!-- Tabla para mostrar los vuelos -->
         <table class="flight-table" id="resultados">
             <tr>
                 <th>Número de Vuelo</th>
@@ -51,31 +74,27 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'user') {
                 <th>Salida</th>
                 <th>Llegada</th>
                 <th>Precio</th>
+                <th>Acciones</th>
             </tr>
         </table>
 
-        <!-- Contenedor para el mapa de Leaflet -->
         <div id="map" class="map-container"></div>
     </main>
 
-    <!-- Pie de página con derechos reservados -->
     <footer>
         <p class="footer">&copy; 2024 TDM42. Todos los derechos reservados.</p>
     </footer>
 
-    <!-- Scripts de Leaflet para los mapas -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
         const resultadosTable = document.getElementById('resultados');
         const mapContainer = document.getElementById('map');
         let map;
 
-        // Cargar vuelos al iniciar la página
         window.onload = async () => {
             const response = await fetch('../search/search_flights.php');
             const flights = await response.json();
 
-            // Mostrar los vuelos en la tabla
             flights.forEach(flight => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -85,31 +104,31 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'user') {
                     <td>${flight.departure_time}</td>
                     <td>${flight.arrival_time}</td>
                     <td>${flight.price}</td>
+                    <td>
+                        <form method="POST">
+                            <input type="hidden" name="flight_id" value="${flight.id}">
+                            <button type="submit">Reservar</button>
+                        </form>
+                    </td>
                 `;
-                // Asignar un evento de clic para mostrar el mapa
                 row.onclick = () => toggleMap(flight.origin, flight.destination, row);
                 resultadosTable.appendChild(row);
             });
         };
 
-        // Función para mostrar/ocultar el mapa con la distancia
         const toggleMap = async (origin, destination, selectedRow) => {
-            // Si la fila ya está activa, ocultar el mapa
             if (selectedRow.classList.contains('active')) {
                 selectedRow.classList.remove('active');
-                mapContainer.classList.remove('active'); // Ocultar el mapa
+                mapContainer.classList.remove('active');
                 return;
             }
 
-            // Remover la clase "active" de cualquier fila seleccionada anteriormente
             const rows = resultadosTable.querySelectorAll('tr');
             rows.forEach(row => row.classList.remove('active'));
 
-            // Añadir la clase "active" a la fila seleccionada
             selectedRow.classList.add('active');
-            mapContainer.classList.add('active'); // Mostrar el mapa
+            mapContainer.classList.add('active');
 
-            // Inicializar el mapa si no está creado
             if (!map) {
                 map = L.map('map').setView([0, 0], 2);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -117,7 +136,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'user') {
                 }).addTo(map);
             }
 
-            // Obtener las coordenadas del origen y destino usando Nominatim
             const getCoordinates = async (location) => {
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`);
                 const data = await res.json();
@@ -128,14 +146,13 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'user') {
             const destinationCoords = await getCoordinates(destination);
 
             if (originCoords && destinationCoords) {
-                // Limpiar el mapa y mostrar la nueva ruta
                 map.eachLayer((layer) => {
                     if (!!layer.toGeoJSON) {
                         map.removeLayer(layer);
                     }
                 });
                 const route = L.polyline([originCoords, destinationCoords], { color: 'blue' }).addTo(map);
-                map.fitBounds(route.getBounds()); // Ajustar vista al nuevo trayecto
+                map.fitBounds(route.getBounds());
             }
         };
     </script>

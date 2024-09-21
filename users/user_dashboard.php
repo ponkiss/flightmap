@@ -36,7 +36,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'user') {
         <!-- Menú de navegación principal -->
         <nav>
             <a href="../index.html">Cerrar Sesión</a>
-            <a href="register.html">Agendar una Reservación</a>
+            <a href="user_search.php">Agendar una Reservación</a>
             <a href="user_search.php">Buscar Vuelos</a>
         </nav>
     </header>
@@ -54,7 +54,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'user') {
             <!-- Botones de acción (CTA) -->
             <div class="cta-buttons">
                 <a href="user_search.php" class="btn">Buscar Vuelos</a>
-                <a href="register.html" class="btn">Agendar una Reservación</a>
+                <a href="user_search.php" class="btn">Agendar una Reservación</a>
             </div>
         </section>
     </main>
